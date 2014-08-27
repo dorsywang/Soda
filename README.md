@@ -42,7 +42,8 @@ data = {
 #####renderContainer {string} | {jqueryObj} 渲染到的元素
 #####param {function}|{object} cgi的请求参数
 ```javascript
-var render = new RenderModel({
+// 页面的头部模块
+var header = new RenderModel({
     param: {
         bid: 10038,
         name: 'a'
@@ -53,7 +54,7 @@ var render = new RenderModel({
 ```javascript
 var bid,name;
 // ...
-var render = new RenderModel({
+var header = new RenderModel({
     param: function(){
         return {
             bid: bid,
@@ -65,7 +66,7 @@ var render = new RenderModel({
 #####data {object} 可选的 如果存在data就会使用data渲染模板而不请求cgi
 #####renderTool {object} 渲染模板时候可用的工具函数对像
 ```javascript
-var render = new RenderModel({
+var header = new RenderModel({
     renderTool: {
         formatTime: funtion(t){
             return "2014";
@@ -81,7 +82,7 @@ var render = new RenderModel({
 #####processData {function} 对数据的加工与处理，此时对当前模板视图内的DOM操作是禁止的
 processData的第一个参数为Data，第二个参数为cgi的请求次数
 ```javascript
-var render = new RenderModel({
+var hender = new RenderModel({
     processData: function(res, cgiCount){
         if(cgiCount === 0){
             // cgiCount为0始终是在用本地缓存中的数据 
@@ -95,7 +96,7 @@ var render = new RenderModel({
 ```
 #####error {function} cgi请求出错时，一般为网络错误导致 
 ```javascript
-var render = new RenderModel({
+var hender = new RenderModel({
     error: function(res, cgiCount){
         if(cgiCount === 0){
             // cgiCount为0始终是在用本地缓存中的数据 
@@ -110,7 +111,7 @@ var render = new RenderModel({
 参数同processData
 #####myData {object} 自定义数据，可以在processData、complete中使用,直接用this.myData引用即可，常用于对继承中的特殊处理
 ```javascript
-var render = new RenderModel{
+var tab1 = new RenderModel{
     myData: {
         type: 100
     },
@@ -125,7 +126,7 @@ var render = new RenderModel{
     }
 };
 
-var render2 = render.extend({
+var tab2 = render.extend({
     myData: {
         type: 300
     }
@@ -133,7 +134,7 @@ var render2 = render.extend({
 ```
 #####events {function} 此模块的事件绑定 代码内做了防止多次事件绑定，<span style="color:red">被继承的事件也只会执行一次</span>
 ```javascript
-var render = new RenderModel({
+var tab1 = new RenderModel({
     events: function(){
         $("#list").on("tap", function(e){
         
@@ -141,12 +142,12 @@ var render = new RenderModel({
     }
 });
 
-// render2继承了render的events，events不会再次执行
-var render2 = render.extend({
+// tab2继承了tab1的events，events不会再次执行
+var tab2 = tab1.extend({
 });
 
-// render3定义了events，render3的events会继续执行
-var render3 = render.extend({
+// tab3定义了events，tab3的events会继续执行
+var tab3 = tab1.extend({
     events: function(){
         $("#list2").on("tap", function(e){
             
@@ -158,5 +159,57 @@ var render3 = render.extend({
 #####noRefresh {boolean} true： 模型调用resfresh方法时，不进行任何操作，false： 会执行refresh操作
 
 ####模型方法
-#####rock 使模型开始
+#####rock 使模型开始执行
+```javascript
+var hender = new RenderModel({
+
+});
+
+hender.rock();
+```
+#####update 用新的数据更新模型
+```javascript
+//...
+
+// 模型使用新的数据重新渲染视图
+hender.update(data);
+```
+
+#####reset 重置模型
+>重置模型，即是，重置模型将会使模型的所有状态回归，但已经请求的数据会缓存，不会重新请求cgi,常跟rock配合使用，用于使用缓存的数据重新渲染视图，对于scrollModel即是重新渲染视图，滚动加载时，有数据会用缓存数据，没有会重新请求cgi进行渲染
+
+reset方法会调用onreset的配置方法
+
+
+#####refresh 刷新模型，重新请求cgi，重新渲染
+>refresh其实是进行了以下三个步骤：清空缓存数据，调用reset方法重置，调用rock方法完成了模型的刷新操作，refresh方法会执行onreset配置
+
+```javascript
+//...
+
+// 点击刷新时，刷新hender的模块
+$("#refresh").on("tap", function(e){
+   hender.refresh(); 
+});
+
+```
+
+#####feed 使用该模型的数据对某模型渲染
+>一般来说，某个小模块依赖于某个大模块的cgi返回数据，可以使用此方法
+
+```javascript
+var header = new RenderModel({
+    cgiName: "/cgi-bin/header",
+    //...
+});
+
+var navigator = new RenderModel({
+
+});
+
+header.feed(navigator);
+header.rock();
+```
+#####resetData 要求该模型下次被调用rock方法时去拉最新的数据，常用于model被mutitab管理时，要求刷新某个模型的数据
+
 
