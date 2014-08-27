@@ -159,7 +159,7 @@ var tab3 = tab1.extend({
 #####noRefresh {boolean} true： 模型调用resfresh方法时，不进行任何操作，false： 会执行refresh操作
 
 ####模型方法
-#####rock 使模型开始执行
+#####rock() 使模型开始执行
 ```javascript
 var hender = new RenderModel({
 
@@ -167,7 +167,7 @@ var hender = new RenderModel({
 
 hender.rock();
 ```
-#####update 用新的数据更新模型
+#####update(data) 用新的数据更新模型
 ```javascript
 //...
 
@@ -175,13 +175,13 @@ hender.rock();
 hender.update(data);
 ```
 
-#####reset 重置模型
+#####reset() 重置模型
 >重置模型，即是，重置模型将会使模型的所有状态回归，但已经请求的数据会缓存，不会重新请求cgi,常跟rock配合使用，用于使用缓存的数据重新渲染视图，对于scrollModel即是重新渲染视图，滚动加载时，有数据会用缓存数据，没有会重新请求cgi进行渲染
 
 reset方法会调用onreset的配置方法
 
 
-#####refresh 刷新模型，重新请求cgi，重新渲染
+#####refresh() 刷新模型，重新请求cgi，重新渲染
 >refresh其实是进行了以下三个步骤：清空缓存数据，调用reset方法重置，调用rock方法完成了模型的刷新操作，refresh方法会执行onreset配置
 
 ```javascript
@@ -194,7 +194,7 @@ $("#refresh").on("tap", function(e){
 
 ```
 
-#####feed 使用该模型的数据对某模型渲染
+#####feed(model) 使用该模型的数据对某模型渲染
 >一般来说，某个小模块依赖于某个大模块的cgi返回数据，可以使用此方法
 
 ```javascript
@@ -210,6 +210,107 @@ var navigator = new RenderModel({
 header.feed(navigator);
 header.rock();
 ```
-#####resetData 要求该模型下次被调用rock方法时去拉最新的数据，常用于model被mutitab管理时，要求刷新某个模型的数据
+#####resetData() 要求该模型下次被调用rock方法时去拉最新的数据，常用于model被mutitab管理时，要求刷新某个模型的数据
 
+#####show() 显示模块对应的container
+#####hide() 隐藏模快对应的container
+#####extend(opt) 从该模块继承一个新的模块
+opt即是配置参数，<span style="color:red;">如果没有定义param，则会使用原有可能被缓存的param</span>
+
+```javascript
+var tab1 = new RenderModel({
+    param: function(){
+        return {
+            bid: bid,
+            name: name
+        }
+    },
+    
+    cgiName: '/cgi-bin/tab1',
+    renderContainer: ".tab",
+    renderTmpl: Tmpl_inline.tab,
+    processData: function(data){
+        
+    }
+});
+
+var tab2 = tab1.extend({
+    cgiName: '/cgi-bin/tab2'
+});
+
+```
+#####freeze() 冻结该模块 主要是对于滚动加载的模块，调用此方法可以使不再滚动加载
+```javascript
+// 滚动加载模型
+var tab1 = new ScrollModel({
+    param: function(){
+        var every = 10;
+        var start = - every;
+        return function(){
+            bid: bid,
+            name: name,
+            start: start += every,
+            every: every
+        }
+    },
+    
+    cgiName: '/cgi-bin/tab1',
+    renderContainer: ".tab",
+    renderTmpl: Tmpl_inline.tab,
+    processData: function(data){
+        // 数据结束，滚动加载模型冻结
+        if(data.isend){
+            this.freeze();
+        }
+    }
+});
+```
+#####melt()  解冻该模块
+
+###ScrollModel
+####滚动加载模型
+>滚动加载模型继承自renderModel，所以拥有renderModel的所有配置参数和方法
+<span style='color:red;'>scrollModel默认的滚动元素在ios下（其子元素比该元素高)是id为”js_bar_main"的元素，android下为window</span>
+
+例子
+
+主文件
+```html
+    <div class='tabWrapper'>
+        <ul class='tab'>
+            
+        </ul>
+    </div>
+```
+
+模板文件
+```html
+    <% for(var i = 0; i < list.length; i ++){
+            var item = list[i];
+    %>
+    <li data-bid="<%=item.bid%>"><%=item.name%></li>
+    <% }
+    %>
+```
+
+js文件
+```javascript
+var tab1 = new ScrollModel({
+    renderContainer: ".tab",
+    renderTmpl: Tmpl_inline.tab1,
+    cgiName: "/cgi-bin/tab1",
+    processData: function(data){
+        data.result.flag = 1;
+    },
+    events: function(){
+        $(".tab li").on("tap", function(){
+            var bid = $(this).data(bid);
+            
+            Util.openDetail(bid);
+        });
+    }
+});
+
+tab1.rock();
+```
 
