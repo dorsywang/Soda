@@ -320,7 +320,7 @@ var tab1 = new scrollModel({
 ####滚动加载模型
 >滚动加载模型继承自renderModel，所以拥有renderModel的所有配置参数和方法
 
-<div style="color:red;">scrollModel默认的滚动元素在ios下（其子元素比该元素高)是id为"js_bar_main"的元素，android下为window</div>
+<span style="color:red;">scrollModel默认的滚动元素在ios下（其子元素比该元素高)是id为"js_bar_main"的元素，android下为window</span>
 
 例子
 
