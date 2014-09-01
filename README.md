@@ -417,14 +417,14 @@ mutitab.add(".tab1", tab1);
 mutitab.add(".tab2", tab2);
 mutitab.rock();
 ```
-####init(selector)
+#####init(selector)
 定义初始渲染的tab是哪个模型
 
 <span style="color:green;">如果不调用此方法，mutitab将会初始化渲染第一个被增加上去的model</span>
 
 <span style="color: red;">此方法要在rock前调用才有效</span>
 
-####rock()
+#####rock()
 mutitab模型动起来
 
 <span style="color:green;">点击某个selector是，selector对应的元素会被增加一个active类，其他mutitab管理的selector元素将被取消active类</span>
