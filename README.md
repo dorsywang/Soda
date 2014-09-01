@@ -9,7 +9,7 @@ Soda是基于逻辑层抽像的前端框架,致力于更高效,便捷,优雅的�
 
 ##方法参考
 
-###RenderModel 
+###renderModel 
 ###普通渲染模型
 >其实前端大多数的操作,无非抽象为,从cgi取到数据然后把数据展示出来.普通的渲染模型即是,从cgi取到数据,通过模型进行数据处理后交给视图层去使用.
 
@@ -49,7 +49,7 @@ data = {
 #####param {function}|{object} cgi的请求参数
 ```javascript
 // 页面的头部模块
-var header = new RenderModel({
+var header = new renderModel({
     param: {
         bid: 10038,
         name: 'a'
@@ -60,7 +60,7 @@ var header = new RenderModel({
 ```javascript
 var bid,name;
 // ...
-var header = new RenderModel({
+var header = new renderModel({
     param: function(){
         return {
             bid: bid,
@@ -78,7 +78,7 @@ var header = new RenderModel({
 
 渲染模板时候可用的工具函数对像
 ```javascript
-var header = new RenderModel({
+var header = new renderModel({
     renderTool: {
         formatTime: funtion(t){
             return "2014";
@@ -98,7 +98,7 @@ var header = new RenderModel({
 
 processData的第一个参数为Data，第二个参数为cgi的请求次数
 ```javascript
-var hender = new RenderModel({
+var hender = new renderModel({
     processData: function(res, cgiCount){
         if(cgiCount === 0){
             // cgiCount为0始终是在用本地缓存中的数据 
@@ -115,7 +115,7 @@ var hender = new RenderModel({
 
 cgi请求出错时，一般为网络错误导致 
 ```javascript
-var hender = new RenderModel({
+var hender = new renderModel({
     error: function(res, cgiCount){
         if(cgiCount === 0){
             // cgiCount为0始终是在用本地缓存中的数据 
@@ -136,7 +136,7 @@ var hender = new RenderModel({
 
 自定义数据，可以在processData、complete中使用,直接用this.myData引用即可，常用于对继承中的特殊处理
 ```javascript
-var tab1 = new RenderModel{
+var tab1 = new renderModel{
     myData: {
         type: 100
     },
@@ -162,7 +162,7 @@ var tab2 = render.extend({
 
 此模块的事件绑定 代码内做了防止多次事件绑定，<span style="color:red">被继承的事件也只会执行一次</span>
 ```javascript
-var tab1 = new RenderModel({
+var tab1 = new renderModel({
     events: function(){
         $("#list").on("tap", function(e){
         
@@ -196,7 +196,7 @@ true： 模型调用resfresh方法时，不进行任何操作，false： 会执�
 #####rock() 
 使模型开始执行
 ```javascript
-var hender = new RenderModel({
+var hender = new renderModel({
 
 });
 
@@ -237,12 +237,12 @@ $("#refresh").on("tap", function(e){
 >一般来说，某个小模块依赖于某个大模块的cgi返回数据，可以使用此方法
 
 ```javascript
-var header = new RenderModel({
+var header = new renderModel({
     cgiName: "/cgi-bin/header",
     //...
 });
 
-var navigator = new RenderModel({
+var navigator = new renderModel({
 
 });
 
@@ -262,7 +262,7 @@ header.rock();
 opt即是配置参数，<span style="color:red;">如果没有定义param，则会使用原有可能被缓存的param</span>
 
 ```javascript
-var tab1 = new RenderModel({
+var tab1 = new renderModel({
     param: function(){
         return {
             bid: bid,
@@ -287,7 +287,7 @@ var tab2 = tab1.extend({
 冻结该模块 主要是对于滚动加载的模块，调用此方法可以使不再滚动加载
 ```javascript
 // 滚动加载模型
-var tab1 = new ScrollModel({
+var tab1 = new scrollModel({
     param: function(){
         var every = 10;
         var start = - every;
@@ -313,7 +313,7 @@ var tab1 = new ScrollModel({
 #####melt()  
 解冻该模块
 
-###ScrollModel
+###scrollModel
 ####滚动加载模型
 >滚动加载模型继承自renderModel，所以拥有renderModel的所有配置参数和方法
 <span style='color:red;'>scrollModel默认的滚动元素在ios下（其子元素比该元素高)是id为”js_bar_main"的元素，android下为window</span>
@@ -341,7 +341,7 @@ var tab1 = new ScrollModel({
 
 js文件
 ```javascript
-var tab1 = new ScrollModel({
+var tab1 = new scrollModel({
     renderContainer: ".tab",
     renderTmpl: Tmpl_inline.tab1,
     cgiName: "/cgi-bin/tab1",
