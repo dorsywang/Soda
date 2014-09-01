@@ -46,7 +46,10 @@ data = {
 {string} | {jqueryObj} 
 
 渲染到的元素
-#####param {function}|{object} cgi的请求参数
+#####param 
+{function}|{object} 
+
+cgi的请求参数
 ```javascript
 // 页面的头部模块
 var header = new renderModel({
