@@ -1,0 +1,13 @@
+{
+    "ret": 0,
+    "result": {
+        "list": [
+        {"name": "ok", value: "blue"},
+        {"name": "ok", value: "blue"},
+        {"name": "ok", value: "blue"},
+        {"name": "ok", value: "blue"},
+        {"name": "ok", value: "blue"},
+        {"name": "ok", value: "blue"}
+        ]
+    }
+}
